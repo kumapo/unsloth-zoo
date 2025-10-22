@@ -148,7 +148,11 @@ def get_lora_layer_modules():
         item = f"peft.tuners.lora.{file[:-len('.py')]}"
         exec(f"import {item}", locals(), globals())
         modules = dir(eval(item))
-        modules = [x for x in modules if x.startswith("Linear") or x.endswith("Linear")]
+        modules = [x for x in modules if (
+            (x.startswith("Linear") or x.endswith("Linear")) or (
+                x.startswith("Conv") or x.endswith("Conv")
+            )
+        )]
         if len(modules) == 0: continue
         exec(f"from {item} import ({', '.join(modules)})", locals(), globals())
         Linear_LoRA_Layers += [(eval(x), item, x,) for x in modules]
